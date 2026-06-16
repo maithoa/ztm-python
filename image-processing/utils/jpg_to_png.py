@@ -1,50 +1,60 @@
-# Covert a folder that contain jpg images to png images
-# Usage: python jpg_to_png.py <folder_path>
-
+""" 
+Convert a folder that contain jpg images to png images
+Usage: python jpg_to_png.py <folder_path> [--dest <new_folder_path>] 
+"""
 from PIL import Image
-import os
+from pathlib import Path
+from argparse import ArgumentParser
 
-test_folder_path = "utils/"
+def jpg_to_png(folder_path: str, new_folder_path: str| None = None) -> int:
+    # 1. Make sure the inputs are clean and valid
+    if not folder_path or not folder_path.strip():
+        raise ValueError("Folder path cannot be empty. Please provide a valid folder path that contains JPEG images.")
+        
+    src_path = Path(folder_path.strip())
 
-def jpg_to_png(folder_path, new_folder_path=None) -> int:
-    #Make sure the inputs are clean and valid
-    folder_path = folder_path.strip() if folder_path else None
-    new_folder_path = new_folder_path.strip() if new_folder_path else None
-
-    if not folder_path or not os.path.exists(folder_path):
+    if not src_path.is_dir():
         raise ValueError("Invalid folder path provided. Please provide a valid folder path that contains JPEG images.")
     
-    # If new_folder_path is not provided or is empty, use the original folder path to save the converted images
-    if not new_folder_path:
-        new_folder_path = folder_path
+    # 2. Check if the destination folder is provided, if not use the original folder
+    if new_folder_path and new_folder_path.strip():
+        dest_path = Path(new_folder_path.strip())
     else:
-        # if not existing then create new folder
-        if not os.path.exists(new_folder_path):
-            os.makedirs(new_folder_path)
+        dest_path = src_path
     
+    # 3. Create destination folder if it does not exists
+    dest_path.mkdir(parents=True, exist_ok=True)
+    
+    # 4. Iterate through the files in the original folder, convert jpg/jpeg images to png and save them to the new folder
     processed_images_count = 0
-
-    for filename in os.listdir(folder_path): 
-        if(filename.endswith(".jpg")or filename.endswith("jpeg")):
+    
+    for filename in src_path.iterdir(): 
+        if filename.suffix.lower() in (".jpg", ".jpeg"):
             # Load the original_image
-            original_image = Image.open(os.path.join(folder_path, filename))
-            # Create new filename with .png extension
-            new_filename = os.path.splitext(filename)[0]+".png"
-            # Save the loaded image in png format
-            original_image.save(os.path.join(new_folder_path, new_filename))
-            processed_images_count += 1
+            with Image.open(filename) as original_image:
+                # Create new filename with .png extension
+                new_filename = filename.with_suffix(".png").name
+
+                # Save the loaded image in png format
+                original_image.save(dest_path / new_filename)
+                processed_images_count += 1
 
     return processed_images_count
 
 
-def main():
-    folder_path = input("Enter the folder path that stores the images in JPEG format:")
-    new_folder_path = input("Enter the folder path to save the converted PNG images:")
+def main() -> None:
+    parser = ArgumentParser(description="Convert JPEG images to PNG format.")
+    parser.add_argument("source", help="Path to the folder containing JPEG images.")
+    parser.add_argument("--dest", help="Path to the folder to save the converted PNG images. If not provided, the original folder will be used.")
+    
+    args = parser.parse_args()
+
     try:
-        count = jpg_to_png(folder_path, new_folder_path)
-        print(f"Successfully converted {count} images from JPEG to PNG format. and saved them to {new_folder_path}")
+        count = jpg_to_png(args.source, args.dest)
+        print(f"Successfully converted {count} images from JPEG to PNG format. and saved them to {args.dest if args.dest else args.source}")
     except ValueError as e:
         print(f"Error: {e}")
 
-if __name__ == "__main__":    main()
+if __name__ == "__main__":    
+    main()
 

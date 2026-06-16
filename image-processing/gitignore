@@ -1,2 +1,15 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Environment variable files
 .DS_Store
 .env
+
+# Testing files
+*.jpg
+*.png
