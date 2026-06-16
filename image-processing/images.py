@@ -20,3 +20,12 @@ filtered_img.save(folder_path + "pikachu_blur.jpg")
 sharper_img = img.filter(ImageFilter.SHARPEN)
 sharper_img.save(folder_path + "pikachu_sharper.jpg")
 
+#sharper_img.show()
+
+# Resize_image
+sharper_img.resize((200, 200)).save(folder_path + "pikachu_resized.jpg")
+
+# Crop image
+box = (100, 100, 400, 400)
+cropped_img = img.crop(box)
+cropped_img.save(folder_path + "pikachu_cropped.jpg")
