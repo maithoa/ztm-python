@@ -2,9 +2,10 @@
 Convert a folder that contain jpg images to png images
 Usage: python jpg_to_png.py <folder_path> [--dest <new_folder_path>] 
 """
-from PIL import Image
-from pathlib import Path
 from argparse import ArgumentParser
+from pathlib import Path
+
+from PIL import Image
 
 def jpg_to_png(folder_path: str, new_folder_path: str| None = None) -> int:
     # 1. Make sure the inputs are clean and valid
