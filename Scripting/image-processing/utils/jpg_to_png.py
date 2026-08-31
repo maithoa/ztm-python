@@ -7,6 +7,7 @@ from pathlib import Path
 
 from PIL import Image
 
+
 def jpg_to_png(folder_path: str, new_folder_path: str| None = None) -> int:
     # 1. Make sure the inputs are clean and valid
     if not folder_path or not folder_path.strip():
@@ -58,4 +59,3 @@ def main() -> None:
 
 if __name__ == "__main__":    
     main()
-
