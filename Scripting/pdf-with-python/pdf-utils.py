@@ -1,6 +1,7 @@
-import pypdf
-from pathlib import Path
 from copy import copy
+from pathlib import Path
+
+import pypdf
 
 
 def pdf_combiner(pdf_files_list, output_path="test-files/combined.pdf"):

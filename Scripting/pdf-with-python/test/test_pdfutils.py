@@ -1,9 +1,10 @@
-import pytest
+import importlib.util
 import tempfile
 from pathlib import Path
-from unittest.mock import patch, MagicMock
-import importlib.util
+from unittest.mock import MagicMock, patch
+
 import pypdf
+import pytest
 
 # Import pdf utilities from pdf-utils.py
 pdf_utils_path = Path(__file__).parent.parent / "pdf-utils.py"
