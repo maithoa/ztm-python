@@ -15,7 +15,7 @@ jobs:
         python-version: ["3.10", "3.11", "3.12", "3.13"]
     defaults:
       run:
-        working-directory: Scripting/image-processing
+        working-directory: Scripting
 
     steps:
       - name: Checkout repository
@@ -29,10 +29,13 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pillow pytest ruff
+          pip install pillow pytest ruff pypdf
 
-      - name: Lint with Ruff
-        run: ruff check utils/jpg_to_png.py
+      - name: Lint all Python files with Ruff
+        run: ruff check .
 
-      - name: Run tests
-        run: python -m pytest -q
+      - name: Run tests for image-processing
+        run: cd image-processing && python -m pytest -q
+
+      - name: Run tests for pdf-with-python
+        run: cd pdf-with-python && python -m pytest -q
