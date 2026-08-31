@@ -20,7 +20,8 @@ def pdf_combiner(pdf_files_list, output_path="test-files/combined.pdf"):
         pdf_path = Path(pdf_file)
         if not pdf_path.exists():
             raise FileNotFoundError(f"PDF file not found: {pdf_file}")
-    
+
+    # Merge files
     merger = pypdf.PdfWriter()
     for pdf_file in pdf_files_list:
         merger.append(pdf_file)
@@ -29,7 +30,7 @@ def pdf_combiner(pdf_files_list, output_path="test-files/combined.pdf"):
     output_file_path = Path(output_path)
     output_file_path.parent.mkdir(parents=True, exist_ok=True)
 
-    # Write using context manager (best practice)
+    # Write merged file out using context manager (best practice)
     with open(output_path, "wb") as output_file:
         merger.write(output_file)
 
@@ -57,12 +58,14 @@ def add_watermark(input_pdf, watermark_pdf, output_pdf):
     input_reader = pypdf.PdfReader(input_pdf)
     watermark_reader = pypdf.PdfReader(watermark_pdf)
 
+    # Create watermarked pages
     writer = pypdf.PdfWriter()
     for page in input_reader.pages:
         # Create a copy of watermark for each page to avoid mutation
         watermark_copy = copy(watermark_reader.pages[0])
         # Merge page ON TOP watermark so watermark appears at bottom due to the water mark page is not transparent
         watermark_copy.merge_page(page)
+        # Add merged page to the output filestream
         writer.add_page(watermark_copy)
 
     output_file_path = Path(output_pdf)
