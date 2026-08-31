@@ -2,7 +2,6 @@ from pathlib import Path
 
 import pytest
 from PIL import Image
-
 from utils.jpg_to_png import jpg_to_png
 
 
