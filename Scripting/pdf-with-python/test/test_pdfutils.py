@@ -1,6 +1,4 @@
 import pytest
-import os
-import sys
 import tempfile
 from pathlib import Path
 from unittest.mock import patch, MagicMock
@@ -278,7 +276,7 @@ class TestAddWatermark:
             if Path(temp_dir).parent.exists():
                 try:
                     Path(temp_dir).parent.rmdir()
-                except:
+                except OSError:
                     pass
 
     def test_add_watermark_preserves_page_count(self, test_files_dir, temp_output_file):

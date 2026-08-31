@@ -1,5 +1,4 @@
 import pypdf
-import sys
 from pathlib import Path
 from copy import copy
 
