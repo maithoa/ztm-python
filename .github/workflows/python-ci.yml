@@ -29,7 +29,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pillow pytest ruff==0.15.17 pypdf
+          pip install pillow pytest ruff==0.15.17 pypdf python-dotenv
 
       - name: Lint all Python files with Ruff
         run: ruff check .
@@ -39,3 +39,6 @@ jobs:
 
       - name: Run tests for pdf-with-python
         run: cd pdf-with-python && python -m pytest -q
+
+      - name: Run tests for sending-email-with-python
+        run: cd sending-email-with-python && python -m pytest -q

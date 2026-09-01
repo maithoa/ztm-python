@@ -14,7 +14,7 @@ def load_smtp_config():
     load_dotenv(dotenv_path=env_path)
 
     SMTP_SENDER = os.getenv('SMTP_SENDER')
-    SMTP_SENDER_NAME = os.getenv('SMTP_SENDER_NAME')
+    SMTP_SENDER_NAME = os.getenv('SMTP_SENDER_NAME') or SMTP_SENDER
     SMTP_APP_PASSWORD = os.getenv('SMTP_APP_PASSWORD')
     SMTP_HOST = os.getenv('SMTP_HOST')
     SMTP_PORT = os.getenv('SMTP_PORT')
@@ -22,6 +22,11 @@ def load_smtp_config():
     if not SMTP_SENDER or not SMTP_APP_PASSWORD or not SMTP_HOST or not SMTP_PORT:
         logger.error("SMTP configuration is incomplete.")
         raise ValueError("SMTP configuration is incomplete.")
+
+    SMTP_PORT = SMTP_PORT.strip()
+    if not SMTP_PORT.isdigit():
+        logger.error("SMTP_PORT must be a valid integer, got: %s", SMTP_PORT)
+        raise ValueError(f"SMTP_PORT must be a valid integer, got: {SMTP_PORT}")
 
     SMTP_PORT = int(SMTP_PORT)  # Ensure the port is an integer
 
@@ -39,7 +44,9 @@ def send_an_email(recipient_email, subject, content, is_html=False):
     is_html (bool): Flag indicating if the content is HTML. Defaults to False.
     """
 
-    if not recipient_email or not subject or not content:
+    if not (recipient_email and recipient_email.strip()) \
+            or not (subject and subject.strip()) \
+            or not (content and content.strip()):
         logger.error("Recipient email, subject, and content must all be provided.")
         raise ValueError("Recipient email, subject, and content must all be provided.")
 

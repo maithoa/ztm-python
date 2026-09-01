@@ -1,1 +1,138 @@
 2026-09-01 14:35:51,576 ERROR emailer_utils: SMTP configuration is incomplete.
+2026-09-01 15:56:56,051 ERROR emailer_utils: SMTP configuration is incomplete.
+2026-09-01 15:56:56,054 ERROR emailer_utils: Recipient email, subject, and content must all be provided.
+2026-09-01 15:56:56,056 ERROR emailer_utils: Recipient email, subject, and content must all be provided.
+2026-09-01 15:56:56,058 ERROR emailer_utils: Recipient email, subject, and content must all be provided.
+2026-09-01 15:56:56,062 ERROR emailer_utils: Recipient email, subject, and content must all be provided.
+2026-09-01 15:56:56,078 INFO emailer_utils: Email sent successfully to to@example.com
+2026-09-01 15:56:56,087 INFO emailer_utils: Email sent successfully to to@example.com
+2026-09-01 15:56:56,091 ERROR emailer_utils: SMTP error while sending email to to@example.com
+Traceback (most recent call last):
+  File "/Users/thoanguyen/Documents/UpSkills/ZTM Python/Scripting/sending-email-with-python/emailer_utils.py", line 60, in send_an_email
+    with smtplib.SMTP(host=SMTP_HOST, port=SMTP_PORT) as smtp:
+  File "/Users/thoanguyen/.pyenv/versions/3.12.0/lib/python3.12/unittest/mock.py", line 1134, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/thoanguyen/.pyenv/versions/3.12.0/lib/python3.12/unittest/mock.py", line 1138, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/thoanguyen/.pyenv/versions/3.12.0/lib/python3.12/unittest/mock.py", line 1193, in _execute_mock_call
+    raise effect
+smtplib.SMTPException: boom
+2026-09-01 16:04:17,998 ERROR emailer_utils: SMTP configuration is incomplete.
+2026-09-01 16:04:18,003 ERROR emailer_utils: SMTP_PORT must be a valid integer, got: not-a-number
+2026-09-01 16:04:18,005 ERROR emailer_utils: Recipient email, subject, and content must all be provided.
+2026-09-01 16:04:18,007 ERROR emailer_utils: Recipient email, subject, and content must all be provided.
+2026-09-01 16:04:18,011 ERROR emailer_utils: Recipient email, subject, and content must all be provided.
+2026-09-01 16:04:18,013 ERROR emailer_utils: Recipient email, subject, and content must all be provided.
+2026-09-01 16:04:18,027 INFO emailer_utils: Email sent successfully to to@example.com
+2026-09-01 16:04:18,033 INFO emailer_utils: Email sent successfully to to@example.com
+2026-09-01 16:04:18,038 ERROR emailer_utils: SMTP error while sending email to to@example.com
+Traceback (most recent call last):
+  File "/Users/thoanguyen/Documents/UpSkills/ZTM Python/Scripting/sending-email-with-python/emailer_utils.py", line 64, in send_an_email
+    with smtplib.SMTP(host=SMTP_HOST, port=SMTP_PORT) as smtp:
+  File "/Users/thoanguyen/.pyenv/versions/3.12.0/lib/python3.12/unittest/mock.py", line 1134, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/thoanguyen/.pyenv/versions/3.12.0/lib/python3.12/unittest/mock.py", line 1138, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/thoanguyen/.pyenv/versions/3.12.0/lib/python3.12/unittest/mock.py", line 1193, in _execute_mock_call
+    raise effect
+smtplib.SMTPException: boom
+2026-09-01 16:13:30,965 ERROR emailer_utils: SMTP configuration is incomplete.
+2026-09-01 16:13:30,971 ERROR emailer_utils: SMTP_PORT must be a valid integer, got: not-a-number
+2026-09-01 16:13:30,975 ERROR emailer_utils: SMTP configuration is incomplete.
+2026-09-01 16:13:30,977 ERROR emailer_utils: SMTP configuration is incomplete.
+2026-09-01 16:13:30,979 ERROR emailer_utils: SMTP configuration is incomplete.
+2026-09-01 16:13:30,981 ERROR emailer_utils: SMTP configuration is incomplete.
+2026-09-01 16:13:30,983 ERROR emailer_utils: Recipient email, subject, and content must all be provided.
+2026-09-01 16:13:30,985 ERROR emailer_utils: Recipient email, subject, and content must all be provided.
+2026-09-01 16:13:30,987 ERROR emailer_utils: Recipient email, subject, and content must all be provided.
+2026-09-01 16:13:30,988 ERROR emailer_utils: Recipient email, subject, and content must all be provided.
+2026-09-01 16:13:30,990 ERROR emailer_utils: Recipient email, subject, and content must all be provided.
+2026-09-01 16:13:30,992 ERROR emailer_utils: Recipient email, subject, and content must all be provided.
+2026-09-01 16:13:30,993 ERROR emailer_utils: Recipient email, subject, and content must all be provided.
+2026-09-01 16:13:31,007 INFO emailer_utils: Email sent successfully to to@example.com
+2026-09-01 16:13:31,014 INFO emailer_utils: Email sent successfully to to@example.com
+2026-09-01 16:13:31,018 ERROR emailer_utils: SMTP error while sending email to to@example.com
+Traceback (most recent call last):
+  File "/Users/thoanguyen/Documents/UpSkills/ZTM Python/Scripting/sending-email-with-python/emailer_utils.py", line 67, in send_an_email
+    with smtplib.SMTP(host=SMTP_HOST, port=SMTP_PORT) as smtp:
+  File "/Users/thoanguyen/.pyenv/versions/3.12.0/lib/python3.12/unittest/mock.py", line 1134, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/thoanguyen/.pyenv/versions/3.12.0/lib/python3.12/unittest/mock.py", line 1138, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/thoanguyen/.pyenv/versions/3.12.0/lib/python3.12/unittest/mock.py", line 1193, in _execute_mock_call
+    raise effect
+smtplib.SMTPException: boom
+2026-09-01 16:13:31,024 ERROR emailer_utils: Unexpected error while sending email to to@example.com
+Traceback (most recent call last):
+  File "/Users/thoanguyen/Documents/UpSkills/ZTM Python/Scripting/sending-email-with-python/emailer_utils.py", line 70, in send_an_email
+    smtp.login(SMTP_SENDER, SMTP_APP_PASSWORD)
+  File "/Users/thoanguyen/.pyenv/versions/3.12.0/lib/python3.12/unittest/mock.py", line 1134, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/thoanguyen/.pyenv/versions/3.12.0/lib/python3.12/unittest/mock.py", line 1138, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/thoanguyen/.pyenv/versions/3.12.0/lib/python3.12/unittest/mock.py", line 1193, in _execute_mock_call
+    raise effect
+OSError: network unreachable
+2026-09-01 16:14:56,434 ERROR emailer_utils: SMTP configuration is incomplete.
+2026-09-01 16:14:56,439 ERROR emailer_utils: SMTP_PORT must be a valid integer, got: not-a-number
+2026-09-01 16:14:56,444 ERROR emailer_utils: SMTP configuration is incomplete.
+2026-09-01 16:14:56,447 ERROR emailer_utils: SMTP configuration is incomplete.
+2026-09-01 16:14:56,451 ERROR emailer_utils: SMTP configuration is incomplete.
+2026-09-01 16:14:56,453 ERROR emailer_utils: SMTP configuration is incomplete.
+2026-09-01 16:14:56,456 ERROR emailer_utils: Recipient email, subject, and content must all be provided.
+2026-09-01 16:14:56,458 ERROR emailer_utils: Recipient email, subject, and content must all be provided.
+2026-09-01 16:14:56,460 ERROR emailer_utils: Recipient email, subject, and content must all be provided.
+2026-09-01 16:14:56,462 ERROR emailer_utils: Recipient email, subject, and content must all be provided.
+2026-09-01 16:14:56,464 ERROR emailer_utils: Recipient email, subject, and content must all be provided.
+2026-09-01 16:14:56,466 ERROR emailer_utils: Recipient email, subject, and content must all be provided.
+2026-09-01 16:14:56,468 ERROR emailer_utils: Recipient email, subject, and content must all be provided.
+2026-09-01 16:14:56,485 INFO emailer_utils: Email sent successfully to to@example.com
+2026-09-01 16:14:56,492 INFO emailer_utils: Email sent successfully to to@example.com
+2026-09-01 16:14:56,496 ERROR emailer_utils: SMTP error while sending email to to@example.com
+Traceback (most recent call last):
+  File "/Users/thoanguyen/Documents/UpSkills/ZTM Python/Scripting/sending-email-with-python/emailer_utils.py", line 67, in send_an_email
+    with smtplib.SMTP(host=SMTP_HOST, port=SMTP_PORT) as smtp:
+  File "/Users/thoanguyen/.pyenv/versions/3.12.0/lib/python3.12/unittest/mock.py", line 1134, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/thoanguyen/.pyenv/versions/3.12.0/lib/python3.12/unittest/mock.py", line 1138, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/thoanguyen/.pyenv/versions/3.12.0/lib/python3.12/unittest/mock.py", line 1193, in _execute_mock_call
+    raise effect
+smtplib.SMTPException: boom
+2026-09-01 16:14:56,506 ERROR emailer_utils: Unexpected error while sending email to to@example.com
+Traceback (most recent call last):
+  File "/Users/thoanguyen/Documents/UpSkills/ZTM Python/Scripting/sending-email-with-python/emailer_utils.py", line 70, in send_an_email
+    smtp.login(SMTP_SENDER, SMTP_APP_PASSWORD)
+  File "/Users/thoanguyen/.pyenv/versions/3.12.0/lib/python3.12/unittest/mock.py", line 1134, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/thoanguyen/.pyenv/versions/3.12.0/lib/python3.12/unittest/mock.py", line 1138, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/thoanguyen/.pyenv/versions/3.12.0/lib/python3.12/unittest/mock.py", line 1193, in _execute_mock_call
+    raise effect
+OSError: network unreachable
+2026-09-01 16:14:56,511 ERROR emailer_utils: Unexpected error while sending email to to@example.com
+Traceback (most recent call last):
+  File "/Users/thoanguyen/Documents/UpSkills/ZTM Python/Scripting/sending-email-with-python/emailer_utils.py", line 67, in send_an_email
+    with smtplib.SMTP(host=SMTP_HOST, port=SMTP_PORT) as smtp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/thoanguyen/.pyenv/versions/3.12.0/lib/python3.12/unittest/mock.py", line 1134, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/thoanguyen/.pyenv/versions/3.12.0/lib/python3.12/unittest/mock.py", line 1138, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/thoanguyen/.pyenv/versions/3.12.0/lib/python3.12/unittest/mock.py", line 1193, in _execute_mock_call
+    raise effect
+socket.gaierror: Name or service not known
