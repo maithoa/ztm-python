@@ -42,3 +42,6 @@ jobs:
 
       - name: Run tests for sending-email-with-python
         run: cd sending-email-with-python && python -m pytest -q
+
+      - name: Run tests for checkpassword
+        run: cd passwordchecker && python -m pytest -q
