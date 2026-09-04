@@ -39,16 +39,7 @@ def load_twilio_config():
     
     return TwilioConfig(**config_values)
 
-def redact_secrets(message):
-    config = load_twilio_config()
-
-    secrets = [
-        config.account_sid,
-        config.auth_token,
-        config.from_phone_number,
-        config.api_url,
-        config.content_sid
-    ]
+def redact_secrets(secrets, message): 
 
     redacted_message = message
     for secret in secrets:
@@ -59,6 +50,13 @@ def redact_secrets(message):
 
 def create_sms(to_phone_number, message_body):
     config = load_twilio_config()
+    secrets = [
+            config.account_sid,
+            config.auth_token,
+            config.from_phone_number,
+            config.api_url,
+            config.content_sid
+        ]
     client = Client(config.account_sid, config.auth_token)
 
     try:
@@ -71,14 +69,21 @@ def create_sms(to_phone_number, message_body):
         logger.info("SMS sent successfully to %s", to_phone_number)
         return message.sid
     except Exception as e:
-        logger.error("Failed to send SMS to %s: %s", to_phone_number, redact_secrets(str(e)))
+        logger.error("Failed to send SMS to %s: %s", to_phone_number, redact_secrets(secrets, str(e)))
         raise
 
 def post_sms_message(to_phone_number, message_body):
     config = load_twilio_config()
+    secrets = [
+            config.account_sid,
+            config.auth_token,
+            config.from_phone_number,
+            config.api_url,
+            config.content_sid
+        ]
 
     url = (
-        f"https://api.twilio.com/2010-04-01/Accounts/"
+        f"{config.api_url}/2010-04-01/Accounts/"
         f"{config.account_sid}/Messages.json"
     )
 
@@ -95,10 +100,10 @@ def post_sms_message(to_phone_number, message_body):
     response.raise_for_status()
 
     if response.status_code != 201: 
-        logger.error("Failed to create SMS via Twillio via POST request: %s", redact_secrets(response.text))
-        raise ValueError("Failed to create SMS via Twillio POST request")
+        logger.error("Failed to create SMS via Twilio via POST request: %s", redact_secrets(secrets, response.text))
+        raise ValueError("Failed to create SMS via Twilio POST request")
     
-    logger.info("SMS sent successfully via POST request to %s and the message SID is %s and status of message is %s", to_phone_number, redact_secrets(response.json()['sid']), redact_secrets(response.json()['status']))
+    logger.info("SMS sent successfully via POST request to %s and the message SID is %s and status of message is %s", to_phone_number, redact_secrets(secrets, response.json()['sid']), redact_secrets(secrets, response.json()['status']))
     return response.json()["sid"]
 
 def main(to_phone_number, message_body):
@@ -112,7 +117,7 @@ def main(to_phone_number, message_body):
 if __name__ == "__main__":
     import sys
     if len(sys.argv) != 3:
-        print("Usage: python send-sms-via-twilio.py <to_phone_number> <message_body>")
+        print("Usage: python send-sms-via-twilio <to_phone_number> <message_body>")
         sys.exit(1)
 
     to_phone_number = sys.argv[1]
