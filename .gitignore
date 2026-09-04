@@ -10,7 +10,6 @@ wheels/
 # Environment variable files
 .DS_Store
 .env
-*.log
 
 # Testing files
 *.jpg
