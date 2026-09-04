@@ -15,3 +15,6 @@ wheels/
 # Testing files
 *.jpg
 *.png
+
+# Log files
+*.log

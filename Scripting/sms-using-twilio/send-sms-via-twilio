@@ -3,6 +3,16 @@ import requests
 from twilio.rest import Client
 from pathlib import Path
 from dotenv import load_dotenv
+from dataclasses import dataclass
+
+@dataclass(frozen=True)
+class TwilioConfig:
+    account_sid: str
+    auth_token: str
+    from_phone_number: str
+    api_url: str
+    content_sid: str
+
 from logger_config import get_logger
 
 logger = get_logger(__name__)
@@ -11,60 +21,84 @@ def load_twilio_config():
     env_path = Path(__file__).parent.parent / '.env'
     load_dotenv(dotenv_path=env_path)
 
-    TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
-    TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
-    TWILIO_PHONE_NUMBER = os.getenv('TWILIO_PHONE_NUMBER')
-    TWILIO_API_URL = os.getenv('TWILIO_API_URL')
-    TWILIO_CONTENT_SID = os.getenv('TWILIO_CONTENT_SID')
+    config_values = {
+        "account_sid": os.getenv('TWILIO_ACCOUNT_SID'),
+        "auth_token": os.getenv('TWILIO_AUTH_TOKEN'),
+        "from_phone_number": os.getenv('TWILIO_PHONE_NUMBER'),
+        "api_url": os.getenv('TWILIO_API_URL'),
+        "content_sid": os.getenv('TWILIO_CONTENT_SID')
+    }
 
-    if not TWILIO_ACCOUNT_SID or not TWILIO_AUTH_TOKEN or not TWILIO_PHONE_NUMBER or not TWILIO_API_URL or not TWILIO_CONTENT_SID:
-        logger.error("Twilio configuration is incomplete.")
-        raise ValueError("Twilio configuration is incomplete.")
+    missing_values = [
+        name for name, value in config_values.items() if not value
+    ]
 
-    return TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER, TWILIO_API_URL, TWILIO_CONTENT_SID
+    if missing_values:
+        logger.error("Missing Twilio configuration values: %s", ", ".join(missing_values))
+        raise ValueError("Missing Twilio configuration values: " + ", ".join(missing_values))
+    
+    return TwilioConfig(**config_values)
 
+def redact_secrets(message):
+    config = load_twilio_config()
+
+    secrets = [
+        config.account_sid,
+        config.auth_token,
+        config.from_phone_number,
+        config.api_url,
+        config.content_sid
+    ]
+
+    redacted_message = message
+    for secret in secrets:
+        if secret:
+            redacted_message = redacted_message.replace(secret, "[REDACTED]")
+
+    return redacted_message
 
 def create_sms(to_phone_number, message_body):
-    TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER, TWILIO_API_URL, TWILIO_CONTENT_SID = load_twilio_config()
-    client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+    config = load_twilio_config()
+    client = Client(config.account_sid, config.auth_token)
 
     try:
         message = client.messages.create(
-            from_=TWILIO_PHONE_NUMBER,
+            from_=config.from_phone_number,
             to=to_phone_number,
-            content_sid=TWILIO_CONTENT_SID,
+            content_sid=config.content_sid,
             content_variables=message_body
         )
         logger.info("SMS sent successfully to %s", to_phone_number)
         return message.sid
     except Exception as e:
-        logger.error("Failed to send SMS to %s: %s", to_phone_number, str(e))
+        logger.error("Failed to send SMS to %s: %s", to_phone_number, redact_secrets(str(e)))
         raise
 
 def post_sms_message(to_phone_number, message_body):
-    TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER, TWILIO_API_URL, TWILIO_CONTENT_SID = load_twilio_config()
+    config = load_twilio_config()
 
     url = (
         f"https://api.twilio.com/2010-04-01/Accounts/"
-        f"{TWILIO_ACCOUNT_SID}/Messages.json"
+        f"{config.account_sid}/Messages.json"
     )
 
     response = requests.post(
         url,
-        auth=(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN),
+        auth=(config.account_sid, config.auth_token),
         data={
             "To": to_phone_number,
-            "From": TWILIO_PHONE_NUMBER,
-            "Body": TWILIO_CONTENT_SID,
+            "From": config.from_phone_number,
+            "Body": config.content_sid,
         },
     )
 
     response.raise_for_status()
-    print(response.status_code, response.text)
+
     if response.status_code != 201: 
-        logger.error("Failed to create SMS via Twillio via POST request: %s", response.text)
+        logger.error("Failed to create SMS via Twillio via POST request: %s", redact_secrets(response.text))
         raise ValueError("Failed to create SMS via Twillio POST request")
-    logger.info(f"SMS sent successfully via POST request to {to_phone_number} and the message SID is {response.json()['sid']} and status of message is {response.json()['status']}")
+    
+    logger.info("SMS sent successfully via POST request to %s and the message SID is %s and status of message is %s", to_phone_number, redact_secrets(response.json()['sid']), redact_secrets(response.json()['status']))
     return response.json()["sid"]
 
 def main(to_phone_number, message_body):
@@ -73,7 +107,7 @@ def main(to_phone_number, message_body):
         post_sms_message(to_phone_number, message_body)
         #logger.info("Message SID: %s", message_sid)
     except Exception as e:
-        logger.error("Error occurred in main: %s", str(e))
+        logger.error("Error occurred in main: %s", redact_secrets(str(e)))
         raise
 if __name__ == "__main__":
     import sys
