@@ -13,9 +13,6 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.10", "3.11", "3.12", "3.13"]
-    defaults:
-      run:
-        working-directory: Scripting
 
     steps:
       - name: Checkout repository
@@ -32,16 +29,24 @@ jobs:
           pip install pillow pytest requests ruff==0.15.17 pypdf python-dotenv
 
       - name: Lint all Python files with Ruff
-        run: ruff check .
+        run: ruff check Scripting Scraping
 
       - name: Run tests for image-processing
-        run: cd image-processing && python -m pytest -q
+        working-directory: Scripting/image-processing
+        run: python -m pytest -q
 
       - name: Run tests for pdf-with-python
-        run: cd pdf-with-python && python -m pytest -q
+        working-directory: Scripting/pdf-with-python
+        run: python -m pytest -q
 
       - name: Run tests for sending-email-with-python
-        run: cd sending-email-with-python && python -m pytest -q
+        working-directory: Scripting/sending-email-with-python
+        run: python -m pytest -q
 
       - name: Run tests for checkpassword
-        run: cd passwordchecker && python -m pytest -q
+        working-directory: Scripting/passwordchecker
+        run: python -m pytest -q
+      
+      - name: Run tests for scrape-hackernews
+        working-directory: Scraping/scrape_hackernews
+        run: python -m pytest -q
