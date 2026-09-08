@@ -13,6 +13,9 @@ class TwilioConfig:
     api_url: str
     content_sid: str
 
+class TwilioRequestError(Exception):
+    pass
+
 from logger_config import get_logger
 
 logger = get_logger(__name__)
@@ -36,8 +39,16 @@ def load_twilio_config():
     if missing_values:
         logger.error("Missing Twilio configuration values: %s", ", ".join(missing_values))
         raise ValueError("Missing Twilio configuration values: " + ", ".join(missing_values))
+
+    secrets = [
+                config_values['account_sid'],
+                config_values['auth_token'],
+                config_values['from_phone_number'],
+                config_values['api_url'],
+                config_values['content_sid']
+            ]
     
-    return TwilioConfig(**config_values)
+    return TwilioConfig(**config_values), secrets
 
 def redact_secrets(secrets, message): 
 
@@ -49,14 +60,7 @@ def redact_secrets(secrets, message):
     return redacted_message
 
 def create_sms(to_phone_number, message_body):
-    config = load_twilio_config()
-    secrets = [
-            config.account_sid,
-            config.auth_token,
-            config.from_phone_number,
-            config.api_url,
-            config.content_sid
-        ]
+    config, secrets = load_twilio_config()
     client = Client(config.account_sid, config.auth_token)
 
     try:
@@ -73,38 +77,43 @@ def create_sms(to_phone_number, message_body):
         raise
 
 def post_sms_message(to_phone_number, message_body):
-    config = load_twilio_config()
-    secrets = [
-            config.account_sid,
-            config.auth_token,
-            config.from_phone_number,
-            config.api_url,
-            config.content_sid
-        ]
+    config, secrets = load_twilio_config()
 
     url = (
-        f"{config.api_url}/2010-04-01/Accounts/"
+        f"{config.api_url.rstrip('/')}/2010-04-01/Accounts/"
         f"{config.account_sid}/Messages.json"
     )
 
-    response = requests.post(
-        url,
-        auth=(config.account_sid, config.auth_token),
-        data={
-            "To": to_phone_number,
-            "From": config.from_phone_number,
-            "Body": config.content_sid,
-        },
-    )
+    try:
+        response = requests.post(
+            url,
+            auth=(config.account_sid, config.auth_token),
+            data={
+                "To": to_phone_number,
+                "From": config.from_phone_number,
+                "ContentSid": config.content_sid,
+            },
+            timeout=(5, 15),
+        )
 
-    response.raise_for_status()
+        if not response.ok:
+            print(response.text)
+            error_message = redact_secrets(secrets, response.text)
+            logger.error(
+                "Twilio request failed with status %s: %s",
+                response.status_code,
+                error_message,
+            )
+            raise TwilioRequestError(
+                f"Twilio request failed with status {response.status_code}"
+            )
 
-    if response.status_code != 201: 
-        logger.error("Failed to create SMS via Twilio via POST request: %s", redact_secrets(secrets, response.text))
-        raise ValueError("Failed to create SMS via Twilio POST request")
-    
-    logger.info("SMS sent successfully via POST request to %s and the message SID is %s and status of message is %s", to_phone_number, redact_secrets(secrets, response.json()['sid']), redact_secrets(secrets, response.json()['status']))
-    return response.json()["sid"]
+        return response.json()["sid"]
+
+    except requests.exceptions.RequestException as error:
+        safe_message = redact_secrets(str(error), config)
+        logger.error("Twilio request failed: %s", safe_message)
+        raise TwilioRequestError("Twilio request failed")
 
 def main(to_phone_number, message_body):
     try:
@@ -112,7 +121,7 @@ def main(to_phone_number, message_body):
         post_sms_message(to_phone_number, message_body)
         #logger.info("Message SID: %s", message_sid)
     except Exception as e:
-        logger.error("Error occurred in main: %s", redact_secrets(str(e)))
+        logger.error("Error occurred in main: %s", str(e))
         raise
 if __name__ == "__main__":
     import sys
