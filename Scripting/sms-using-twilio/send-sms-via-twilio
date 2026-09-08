@@ -1,0 +1,134 @@
+import os
+import requests
+from twilio.rest import Client
+from pathlib import Path
+from dotenv import load_dotenv
+from dataclasses import dataclass
+
+@dataclass(frozen=True)
+class TwilioConfig:
+    account_sid: str
+    auth_token: str
+    from_phone_number: str
+    api_url: str
+    content_sid: str
+
+class TwilioRequestError(Exception):
+    pass
+
+from logger_config import get_logger
+
+logger = get_logger(__name__)
+
+def load_twilio_config():
+    env_path = Path(__file__).parent.parent / '.env'
+    load_dotenv(dotenv_path=env_path)
+
+    config_values = {
+        "account_sid": os.getenv('TWILIO_ACCOUNT_SID'),
+        "auth_token": os.getenv('TWILIO_AUTH_TOKEN'),
+        "from_phone_number": os.getenv('TWILIO_PHONE_NUMBER'),
+        "api_url": os.getenv('TWILIO_API_URL'),
+        "content_sid": os.getenv('TWILIO_CONTENT_SID')
+    }
+
+    missing_values = [
+        name for name, value in config_values.items() if not value
+    ]
+
+    if missing_values:
+        logger.error("Missing Twilio configuration values: %s", ", ".join(missing_values))
+        raise ValueError("Missing Twilio configuration values: " + ", ".join(missing_values))
+
+    secrets = [
+                config_values['account_sid'],
+                config_values['auth_token'],
+                config_values['from_phone_number'],
+                config_values['api_url'],
+                config_values['content_sid']
+            ]
+    
+    return TwilioConfig(**config_values), secrets
+
+def redact_secrets(secrets, message): 
+
+    redacted_message = message
+    for secret in secrets:
+        if secret:
+            redacted_message = redacted_message.replace(secret, "[REDACTED]")
+
+    return redacted_message
+
+def create_sms(to_phone_number, message_body):
+    config, secrets = load_twilio_config()
+    client = Client(config.account_sid, config.auth_token)
+
+    try:
+        message = client.messages.create(
+            from_=config.from_phone_number,
+            to=to_phone_number,
+            content_sid=config.content_sid,
+            content_variables=message_body
+        )
+        logger.info("SMS sent successfully to %s", to_phone_number)
+        return message.sid
+    except Exception as e:
+        logger.error("Failed to send SMS to %s: %s", to_phone_number, redact_secrets(secrets, str(e)))
+        raise
+
+def post_sms_message(to_phone_number, message_body):
+    config, secrets = load_twilio_config()
+
+    url = (
+        f"{config.api_url.rstrip('/')}/2010-04-01/Accounts/"
+        f"{config.account_sid}/Messages.json"
+    )
+
+    try:
+        response = requests.post(
+            url,
+            auth=(config.account_sid, config.auth_token),
+            data={
+                "To": to_phone_number,
+                "From": config.from_phone_number,
+                "ContentSid": config.content_sid,
+            },
+            timeout=(5, 15),
+        )
+
+        if not response.ok:
+            print(response.text)
+            error_message = redact_secrets(secrets, response.text)
+            logger.error(
+                "Twilio request failed with status %s: %s",
+                response.status_code,
+                error_message,
+            )
+            raise TwilioRequestError(
+                f"Twilio request failed with status {response.status_code}"
+            )
+
+        return response.json()["sid"]
+
+    except requests.exceptions.RequestException as error:
+        safe_message = redact_secrets(str(error), config)
+        logger.error("Twilio request failed: %s", safe_message)
+        raise TwilioRequestError("Twilio request failed")
+
+def main(to_phone_number, message_body):
+    try:
+        # message_sid = create_sms(to_phone_number, message_body)
+        post_sms_message(to_phone_number, message_body)
+        #logger.info("Message SID: %s", message_sid)
+    except Exception as e:
+        logger.error("Error occurred in main: %s", str(e))
+        raise
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv) != 3:
+        print("Usage: python send-sms-via-twilio <to_phone_number> <message_body>")
+        sys.exit(1)
+
+    to_phone_number = sys.argv[1]
+    message_body = sys.argv[2]
+    main(to_phone_number, message_body)
