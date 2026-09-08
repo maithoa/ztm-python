@@ -26,7 +26,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pillow pytest requests ruff==0.15.17 pypdf python-dotenv
+          pip install pillow pytest requests beautifulsoup4 ruff==0.15.17 pypdf python-dotenv
 
       - name: Lint all Python files with Ruff
         run: ruff check Scripting Scraping
