@@ -45,3 +45,6 @@ jobs:
 
       - name: Run tests for checkpassword
         run: cd passwordchecker && python -m pytest -q
+      
+      - name: Run tests for scrape-hackernews
+        run: cd scrape_hackernews && python -m pytest -q
